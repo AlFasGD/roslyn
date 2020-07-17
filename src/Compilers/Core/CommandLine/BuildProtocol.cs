@@ -520,6 +520,7 @@ Creating BuildRequest
     {
         CSharpCompile = 0x44532521,
         VisualBasicCompile = 0x44532522,
+        CASharpCompile = 0x44532523,
     }
 
     /// <summary>

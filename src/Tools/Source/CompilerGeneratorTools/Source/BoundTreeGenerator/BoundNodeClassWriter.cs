@@ -12,7 +12,8 @@ namespace BoundTreeGenerator
     internal enum TargetLanguage
     {
         VB,
-        CSharp
+        CSharp,
+        CASharp,
     }
 
     internal enum NullHandling
@@ -168,6 +169,13 @@ namespace BoundTreeGenerator
             WriteUsing("System.Runtime.CompilerServices");
             WriteUsing("System.Text");
             WriteUsing("System.Threading");
+
+            if (_targetLang == TargetLanguage.CASharp)
+            {
+                WriteUsing("Microsoft.CodeAnalysis.CASharp.Symbols");
+                WriteUsing("Microsoft.CodeAnalysis.CASharp.Syntax");
+            }
+
             WriteUsing("Microsoft.CodeAnalysis.Collections");
 
             if (_targetLang == TargetLanguage.CSharp)
@@ -202,6 +210,7 @@ namespace BoundTreeGenerator
         {
             switch (_targetLang)
             {
+                case TargetLanguage.CASharp:
                 case TargetLanguage.CSharp:
                     WriteLine("using {0};", nsName); break;
                 case TargetLanguage.VB:
@@ -215,6 +224,10 @@ namespace BoundTreeGenerator
         {
             switch (_targetLang)
             {
+                case TargetLanguage.CASharp:
+                    WriteLine("namespace Microsoft.CodeAnalysis.CASharp");
+                    Brace();
+                    break;
                 case TargetLanguage.CSharp:
                     WriteLine("namespace Microsoft.CodeAnalysis.CSharp");
                     Brace();
@@ -232,6 +245,7 @@ namespace BoundTreeGenerator
         {
             switch (_targetLang)
             {
+                case TargetLanguage.CASharp:
                 case TargetLanguage.CSharp:
                     Unbrace();
                     break;
@@ -248,6 +262,14 @@ namespace BoundTreeGenerator
         {
             switch (_targetLang)
             {
+                case TargetLanguage.CASharp:
+                    WriteLine("internal enum<byte> BoundKind");
+                    Brace();
+                    foreach (var node in _tree.Types.OfType<Node>())
+                        WriteLine("{0},", FixKeyword(StripBound(node.Name)));
+                    Unbrace();
+                    break;
+
                 case TargetLanguage.CSharp:
                     WriteLine("internal enum BoundKind : byte");
                     Brace();
@@ -289,6 +311,7 @@ namespace BoundTreeGenerator
         {
             switch (_targetLang)
             {
+                case TargetLanguage.CASharp:
                 case TargetLanguage.CSharp:
                     {
                         string abstr = "";
@@ -324,6 +347,7 @@ namespace BoundTreeGenerator
         {
             switch (_targetLang)
             {
+                case TargetLanguage.CASharp:
                 case TargetLanguage.CSharp:
                     Unbrace();
                     break;
@@ -369,6 +393,7 @@ namespace BoundTreeGenerator
         {
             switch (_targetLang)
             {
+                case TargetLanguage.CASharp:
                 case TargetLanguage.CSharp:
                     SeparatedList(" || ", items, func);
                     break;
@@ -413,6 +438,7 @@ namespace BoundTreeGenerator
         {
             switch (_targetLang)
             {
+                case TargetLanguage.CASharp:
                 case TargetLanguage.CSharp:
                     {
                         // A public constructor does not have an explicit kind parameter.
